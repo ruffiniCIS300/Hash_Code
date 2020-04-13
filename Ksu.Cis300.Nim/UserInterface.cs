@@ -1,5 +1,5 @@
 ﻿/* UserInterface.cs
- * Author: Rod Howell
+ * Author: Nick Ruffini
  */
 using System;
 using System.Collections.Generic;
@@ -53,6 +53,11 @@ namespace Ksu.Cis300.Nim
         /// The current board position.
         /// </summary>
         private Board _currentPosition;
+
+        /// <summary>
+        /// Dictionary in which we will be practicing memoization
+        /// </summary>
+        private Dictionary<Board, Play> _pastMoves = new Dictionary<Board, Play>();
 
         /// <summary>
         /// Constructs the GUI
@@ -180,6 +185,12 @@ namespace Ksu.Cis300.Nim
         /// <returns>A winning play, or null if there is no winning play.</returns>
         private Play FindBestPlay(Board b)
         {
+            Play val;
+            if (_pastMoves.TryGetValue(b, out val) == true)
+            {
+                return val;
+            }
+
             Play p;
             for (int i = 0; i < b.NumberOfPiles; i++)
             {
@@ -189,10 +200,12 @@ namespace Ksu.Cis300.Nim
                     Board child = b.MakePlay(p);
                     if (FindBestPlay(child) == null)
                     {
+                        _pastMoves.Add(b, p);
                         return p;
                     }
                 }
             }
+            _pastMoves.Add(b, null);
             return null;
         }
 

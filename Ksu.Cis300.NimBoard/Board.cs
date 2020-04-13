@@ -1,5 +1,5 @@
 ﻿/* Board.cs
- * Author: Rod Howell
+ * Author: Nick Ruffini
  */
 using System;
 using System.Collections.Generic;
@@ -28,6 +28,16 @@ namespace Ksu.Cis300.NimBoard
         /// Gets the number of piles.
         /// </summary>
         public int NumberOfPiles => _piles.Length;
+
+        /// <summary>
+        /// Int that holds the hashcode for the object
+        /// </summary>
+        private int _hashCode;
+
+        /// <summary>
+        /// Bool that represents whether or not the hashcode has been computed or not
+        /// </summary>
+        private bool _hasBeenComputed = false;
 
         /// <summary>
         /// Constructs a new board with the given number of stones and limit
@@ -154,6 +164,38 @@ namespace Ksu.Cis300.NimBoard
             b._piles[p.Pile] -= p.Number;
             b._limits[p.Pile] = Math.Min(b._piles[p.Pile], 2 * p.Number);
             return b;
+        }
+
+        /// <summary>
+        /// Overrides the GetHashCode() method!
+        /// </summary>
+        /// <returns> Integer value representing the hashcode for the object </returns>
+        public override int GetHashCode()
+        {
+            if (_hasBeenComputed == false)
+            {
+                _hashCode = 0;
+                int mult = 37;
+
+                _hashCode = _hashCode * mult + NumberOfPiles;
+
+                foreach(int stones in _piles)
+                {
+                    _hashCode = _hashCode * mult + stones;
+                }
+
+                foreach (int limit in _limits)
+                {
+                    _hashCode = _hashCode * mult + limit;
+                }
+
+                _hasBeenComputed = true;
+                return _hashCode;
+            }
+            else
+            {
+                return _hashCode;
+            }
         }
     }
 }
